@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -27,13 +28,18 @@ fun Main() {
         bottomBar = {
             NavigationBar {
                 MainTab.entries.forEach { tab ->
+                    val selected = selectedTab.value == tab
                     NavigationBarItem(
-                        selected = selectedTab.value == tab,
+                        selected = selected,
                         onClick = {
                             selectedTab.value = tab
                         },
                         icon = {
-                            Icon(painterResource(tab.resourceId), contentDescription = tab.label)
+                            Icon(
+                                painterResource(if (selected) tab.filledIcon else tab.outlineIcon),
+                                contentDescription = tab.label,
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            )
                         },
                         label = {
                             Text(tab.label)
@@ -43,8 +49,12 @@ fun Main() {
             }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            when(selectedTab.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (selectedTab.value) {
                 MainTab.Home -> HomeNavHost()
                 MainTab.Favorites -> FavoritesNavHost()
                 MainTab.Cart -> CartNavHost()
@@ -56,7 +66,7 @@ fun Main() {
 
 @Preview(showBackground = true)
 @Composable
-fun MainPreview(){
+fun MainPreview() {
     AppTheme {
         Main()
     }
