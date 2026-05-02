@@ -7,23 +7,29 @@ import pe.edu.upc.easyshop.R
 
 enum class MainTab(
     val label: String,
-    val resourceId: Int
+    val outlineIcon: Int,
+    val filledIcon: Int
 ) {
     Home(
         label = "Home",
-        resourceId = R.drawable.home
+        outlineIcon = R.drawable.home,
+        filledIcon = R.drawable.home_filled
     ),
     Favorites(
         label = "Favorites",
-        resourceId = R.drawable.favorite
+        outlineIcon = R.drawable.favorite,
+        filledIcon = R.drawable.favorite_filled
     ),
     Cart(
         label = "Cart",
-        resourceId = R.drawable.shopping_cart
+        outlineIcon = R.drawable.shopping_cart,
+        filledIcon = R.drawable.shopping_cart_filled
     ),
-    Profile (
+    Profile(
         label = "Profile",
-        resourceId = R.drawable.person
+        outlineIcon = R.drawable.person,
+        filledIcon = R.drawable.person_filled
+
     )
 
 
