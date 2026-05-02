@@ -3,7 +3,10 @@ package pe.edu.upc.easyshop.presentation.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-object HomeRoute
+object ProductListRoute
+
+@Serializable
+object ProductDetailRoute
 
 @Serializable
 object FavoriteRoute

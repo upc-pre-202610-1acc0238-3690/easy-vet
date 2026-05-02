@@ -1,35 +1,46 @@
 package pe.edu.upc.easyshop.presentation.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.serialization.Serializable
-
-
-@Serializable
-object Home
-
-@Serializable
-object ProductDetail
+import pe.edu.upc.easyshop.di.RepositoryModule.provideProductRepository
+import pe.edu.upc.easyshop.domain.model.Product
+import pe.edu.upc.easyshop.presentation.home.ProductDetail
+import pe.edu.upc.easyshop.presentation.home.ProductList
+import pe.edu.upc.easyshop.presentation.home.ProductListViewModel
+import pe.edu.upc.easyshop.presentation.home.ProductListViewModelFactory
 
 @Composable
-fun HomeNavHost() {
+fun HomeNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = Home
-    ) {
-        composable<Home>
-        {
-            Text("Home")
-        }
+    val factory = ProductListViewModelFactory(provideProductRepository())
+    val viewModel: ProductListViewModel = viewModel(factory = factory)
 
-        composable<ProductDetail> {
-            Text("Product detail")
-        }
-
+    val selectedProduct = remember {
+        mutableStateOf<Product?>(null)
     }
+
+    NavHost(navController = navController, startDestination = ProductListRoute) {
+
+        composable<ProductListRoute> {
+            ProductList(viewModel, modifier = modifier) { product ->
+                selectedProduct.value = product
+                navController.navigate(ProductDetailRoute)
+            }
+        }
+
+        composable<ProductDetailRoute> {
+            selectedProduct.value?.let { product ->
+                ProductDetail(product = product)
+            }
+
+        }
+    }
+
 }
