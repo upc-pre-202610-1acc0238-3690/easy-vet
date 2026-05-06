@@ -12,24 +12,33 @@ import pe.edu.upc.easyshop.presentation.home.UiState
 class ProductListViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
-    private var _state = MutableStateFlow(UiState())
-    val state: StateFlow<UiState> = _state
+    val state = MutableStateFlow(UiState())
 
-    fun getProducts() {
+    fun observeProducts() {
+        viewModelScope.launch {
+            productRepository.getProducts().collect { products ->
+                state.update {
+                    it.copy(products = products)
+                }
+            }
+        }
+    }
 
-        _state.update {
+    fun syncProducts() {
+
+        state.update {
             it.copy(isLoading = true)
         }
 
         viewModelScope.launch {
             try {
-                val products = productRepository.getProducts()
-                _state.update {
-                    it.copy(isLoading = false, products = products)
+                productRepository.syncProducts()
+                state.update {
+                    it.copy(isLoading = false)
                 }
             } catch (e: Exception) {
-                _state.update {
-                    it.copy(isLoading = false, errorMessage = e.message)
+                state.update {
+                    it.copy(isLoading = false, errorMessage = e.message ?: "An error occurred")
                 }
             }
 
@@ -38,6 +47,7 @@ class ProductListViewModel(
     }
 
     init {
-        getProducts()
+        observeProducts()
+        syncProducts()
     }
 }
